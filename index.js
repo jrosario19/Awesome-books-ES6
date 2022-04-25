@@ -1,11 +1,28 @@
 import Book from './modules/books.js';
-import Factory from './modules/factory.js';
+import {Factory} from './modules/factory.js';
 
 const [navList, navAdd, navContact] = document.querySelectorAll('.link');
 const allBooks = document.querySelector('.book-list');
 const addBook = document.querySelector('.form-title-add');
 const contact = document.querySelector('.contact');
 const datetime = document.getElementById('current-date');
+
+Factory.retrieveBooks();
+
+
+const rederbook = () => {
+  const deleteButtons = document.querySelectorAll('.deletebtn');
+  deleteButtons.forEach((item) => {
+    item.addEventListener('click',()=>{
+      const index=item.id.slice(-item.id.length+2);
+      Factory.removeBook(index);
+      Factory.retrieveBooks();
+      rederbook();
+    });
+  });
+  
+}
+rederbook(); 
 
 navList.addEventListener('click', () => {
   allBooks.classList.remove('hidden');
@@ -51,7 +68,7 @@ document.getElementById('form').addEventListener('submit', (e) =>{
   Factory.createBook(book);
   
 });
-Factory.retrieveBooks();
+
 
 const currentDate = new Date();
 const date = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)}-${currentDate.getDate()}`;
