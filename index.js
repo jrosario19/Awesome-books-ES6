@@ -1,5 +1,6 @@
 import Book from './modules/books.js';
-import {Factory} from './modules/factory.js';
+import { Factory } from './modules/factory.js';
+import { DateTime } from './luxon/luxon.js';
 
 const [navList, navAdd, navContact] = document.querySelectorAll('.link');
 const allBooks = document.querySelector('.book-list');
@@ -9,20 +10,18 @@ const datetime = document.getElementById('current-date');
 
 Factory.retrieveBooks();
 
-
 const rederbook = () => {
   const deleteButtons = document.querySelectorAll('.deletebtn');
   deleteButtons.forEach((item) => {
-    item.addEventListener('click',()=>{
-      const index=item.id.slice(-item.id.length+2);
+    item.addEventListener('click', () => {
+      const index = item.id.slice(-item.id.length + 2);
       Factory.removeBook(index);
       Factory.retrieveBooks();
       rederbook();
     });
   });
-  
-}
-rederbook(); 
+};
+rederbook();
 
 navList.addEventListener('click', () => {
   allBooks.classList.remove('hidden');
@@ -31,6 +30,7 @@ navList.addEventListener('click', () => {
   navList.classList.add('active');
   navAdd.classList.remove('active');
   navContact.classList.remove('active');
+  rederbook();
 });
 
 navAdd.addEventListener('click', () => {
@@ -40,6 +40,7 @@ navAdd.addEventListener('click', () => {
   navAdd.classList.add('active');
   navList.classList.remove('active');
   navContact.classList.remove('active');
+  rederbook();
 });
 
 navContact.addEventListener('click', () => {
@@ -49,29 +50,29 @@ navContact.addEventListener('click', () => {
   navContact.classList.add('active');
   navList.classList.remove('active');
   navAdd.classList.remove('active');
+  rederbook();
 });
+const showtipme = () => {
+  datetime.innerHTML = DateTime.now().toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS);
+  setTimeout(() => {
+    showtipme();
+  }, 1000);
+};
 
 window.onload = () => {
   contact.classList.add('hidden');
   allBooks.classList.add('hidden');
   addBook.classList.remove('hidden');
+  showtipme();
+  rederbook();
 };
 
-
-document.getElementById('form').addEventListener('submit', (e) =>{
+document.getElementById('form').addEventListener('submit', (e) => {
   e.preventDefault();
   const title = document.getElementById('title').value;
   const author = document.getElementById('author').value;
-      
+
   const book = new Book(title, author);
-  
+
   Factory.createBook(book);
-  
 });
-
-
-const currentDate = new Date();
-const date = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)}-${currentDate.getDate()}`;
-const time = `${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
-const dateCurrentTime = `${date}, ${time}`;
-datetime.innerHTML = dateCurrentTime;
